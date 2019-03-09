@@ -1,6 +1,6 @@
 # vim: sw=2 et ts=2 sts=2
 
-module "public-ip" {
+module "server-test" {
   source = "../../"
 
   count = 2

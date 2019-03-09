@@ -2,16 +2,26 @@
 
 provider "scaleway" {}
 
-resource "scaleway_server" "server" {
+module "scaleway-security-group" {
+  source = "./modules/security-group"
+
+  group = "${var.security_group}"
+  rules = "${var.security_rules}"
+}
+
+module "scaleway-servers" {
+  source = "./modules/server"
+
   count = "${var.count}"
-  name  = "${var.server_name}${var.count > 1 ? format("%d", count.index + var.offset) : ""}"
+
+  offset = "${var.offset}"
+  name  = "${var.server_name}"
   image = "${var.server_image}"
   type  = "${var.server_type}"
 
-  # Hack on empty list. Wait for 0.12 release to fix it
-  public_ip = "${var.public_ip == "true" ? element(concat(scaleway_ip.public_ip.*.ip, list("")), count.index) : ""}"
+  public_ip = "${var.public_ip}"
 
-  security_group = "${scaleway_security_group.group.id}"
+  security_group_id = "${module.scaleway-security-group.id}"
 }
 
 resource "scaleway_ip" "public_ip" {
@@ -29,22 +39,3 @@ resource "scaleway_ip" "public_ip" {
   //server = "${scaleway_server.test.id}"
   //volume = "${scaleway_volume.test.id}"
 //}
-
-resource "scaleway_security_group" "group" {
-  count = "${length(var.security_group) == 0 ? 0 : 1}"
-
-  name        = "${lookup(var.security_group, "name")}"
-  description = "${lookup(var.security_group, "description")}"
-}
-
-resource "scaleway_security_group_rule" "rule" {
-  count = "${length(var.security_rules)}"
-
-  security_group = "${scaleway_security_group.group.id}"
-
-  action    = "${lookup(var.security_rules[count.index], "action")}"
-  direction = "${lookup(var.security_rules[count.index], "direction")}"
-  ip_range  = "${lookup(var.security_rules[count.index], "ip_range")}"
-  protocol  = "${lookup(var.security_rules[count.index], "protocol")}"
-  port      = "${lookup(var.security_rules[count.index], "port")}"
-}
