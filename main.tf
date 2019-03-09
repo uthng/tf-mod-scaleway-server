@@ -19,6 +19,8 @@ module "scaleway-servers" {
   image = "${var.server_image}"
   type  = "${var.server_type}"
 
+  volumes = "${var.server_volumes}"
+
   public_ip = "${var.public_ip}"
 
   security_group_id = "${module.scaleway-security-group.id}"
@@ -28,14 +30,3 @@ resource "scaleway_ip" "public_ip" {
   count = "${var.public_ip == "true" ? var.count : 0}"
   //server = "${element(scaleway_server.server.*.id, count.index)}"
 }
-
-//resource "scaleway_volume" "volume" {
-  //name       = "test"
-  //size_in_gb = 50
-  //type       = "l_ssd"
-//}
-
-//resource "scaleway_volume_attachment" "test" {
-  //server = "${scaleway_server.test.id}"
-  //volume = "${scaleway_volume.test.id}"
-//}

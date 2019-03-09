@@ -12,6 +12,12 @@ variable "server_type" {
   description = "Scaleway server type"
 }
 
+variable "server_volumes" {
+  description = "Additional volumes sharing lifetime of servers"
+  type = "list"
+  default = []
+}
+
 variable "count" {
   description = "Number of servers of the same type to be created"
   default = 1

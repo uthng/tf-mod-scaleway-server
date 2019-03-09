@@ -12,16 +12,20 @@ resource "scaleway_server" "server" {
   public_ip = "${var.public_ip == "true" ? element(concat(scaleway_ip.public_ip.*.ip, list("")), count.index) : ""}"
 
   security_group = "${var.security_group_id}"
+
+  volume = "${var.volumes}"
 }
 
 resource "scaleway_ip" "public_ip" {
   count = "${var.public_ip == "true" ? var.count : 0}"
 }
 
-//resource "scaleway_volume" "volume" {
-  //name       = "test"
-  //size_in_gb = 50
-  //type       = "l_ssd"
+//resource "scaleway_volume" "volumes" {
+  //count = "${length(var.volumes)}"
+
+  //name       = "${lookup(var.volumes[count.index], "name")}"
+  //size_in_gb = "${lookup(var.volumes[count.index], "size")}"
+  //type       = "${lookup(var.volumes[count.index], "type")}"
 //}
 
 //resource "scaleway_volume_attachment" "test" {

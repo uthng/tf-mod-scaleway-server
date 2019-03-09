@@ -31,3 +31,9 @@ variable "security_group_id" {
   description = "Security group ID"
   default = ""
 }
+
+variable "volumes" {
+  description = "Additional volumes sharing lifetime of servers"
+  type = "list"
+  default = []
+}
