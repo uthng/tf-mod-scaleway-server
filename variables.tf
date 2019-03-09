@@ -12,17 +12,40 @@ variable "server_type" {
   description = "Scaleway server type"
 }
 
-variable "server_count" {
+variable "count" {
   description = "Number of servers of the same type to be created"
   default = 1
 }
 
 variable "offset" {
   description = "Offset for counter to know from which number we use in the server name"
-  default = 0
+  default = 1
 }
 
 variable "public_ip" {
   description = "Public IP or not"
   default = "true"
+}
+
+variable "security_group" {
+  description = "Scaleway security group"
+  type = "map"
+  default = {
+    name = "http"
+    description = "Allow HTTP/HTTPS"
+  }
+}
+
+variable "security_rules" {
+  description = "List of security rules attached to security group"
+  type = "list"
+  default = [
+    {
+      action = "accept",
+      direction = "inbound",
+      ip_range = "0.0.0.0/0",
+      protocol = "TCP" 
+      port = 80
+    }
+  ]
 }
