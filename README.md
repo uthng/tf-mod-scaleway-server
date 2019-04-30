@@ -12,13 +12,15 @@ Firstly, Scaleway provider configuration need to be set. This can be done by env
 
 or in the `~/.scwrc`. And then:
 
+##### Provision a new server with new security group
+
 ```
 module "server-test" {
   source = "../../"
 
   count = 1
-  server_name = "test"
-  server_image = "f66633f0-4dfe-4f0f-9ce4-f393910db9de"
+  server_name = "test1"
+  server_image = "63541ee1-8528-48f7-9cdf-c3f7f681c630"
   server_type = "C2S"
   server_volumes = [
     {
@@ -31,7 +33,7 @@ module "server-test" {
 
   security_group = [
     {
-      name = "http",
+      name = "test",
       description = "Allow HTTP/HTTPS"
     }
   ]
@@ -55,6 +57,35 @@ module "server-test" {
 }
 ```
 
+##### Provision a new server with an existing security group
+
+If no rule is specified, the given `security group` will be considered existing and its ID will be fetched using data source.
+
+
+```
+module "server-test-security-group" {
+  source = "../../"
+
+  count = 1
+  server_name = "test2"
+  server_image = "63541ee1-8528-48f7-9cdf-c3f7f681c630"
+  server_type = "C2S"
+  //server_volumes = [
+    //{
+      //size_in_gb = 50
+      //type = "l_ssd"
+    //}
+  //]
+
+  public_ip = "false"
+
+  security_group = {
+    name = "test"
+  }
+
+}
+```
+
 #### Submodules
 This module has 2 submodules:
 - `server`: handles `scaleway_server` resource and additional volumes using `volume` attribute.
@@ -68,5 +99,5 @@ This module has 2 submodules:
 - `count` (optional): Number of servers of the same type to be created. Default: `1`
 - `offset` (optional): Offset for counter to know from which number we use in the server name. Default: `1`
 - `public_ip`: Public IP or not. Default: `true`
-- `security_group`: Scaleway security group. Type: `map`. Default: `{name = "http", description = "Allow HTTP/HTTPS"}`
-- `security_rules`: List of security rules attached to security group. Type: `list`. Default: `[{action = "accept", direction = "inbound", ip_range = "0.0.0.0/0",  protocol = "TCP", port = 80}]`
+- `security_group`: Scaleway security group. Type: `map`. Default: `{}`
+- `security_rules`: List of security rules attached to security group. Type: `list`. Default: `[]`
