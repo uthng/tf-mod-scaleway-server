@@ -4,8 +4,12 @@ output "name" {
   value = "${var.group["name"]}"
 }
 
+// Hack: depending on count value, scaleway_security_group.group or
+// data.scaleway_security_group.group is defined or not.
+// While using with join, if they are undefined, it will be considered
+// as an empty list. If not, Terraform doesnt like and raise an error.
 output "id" {
-  value = "${scaleway_security_group.group.0.id}"
+  value = "${length(var.rules) <= 0 ? join("", data.scaleway_security_group.group.*.id) : join("", scaleway_security_group.group.*.id)}"
 }
 
 output "rules" {

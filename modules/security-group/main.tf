@@ -1,14 +1,19 @@
 provider "scaleway" {}
 
+data "scaleway_security_group" "group" {
+  count = "${length(var.rules) == 0 && lookup(var.group, "name", "") != "" ? 1 : 0}"
+  name = "${lookup(var.group, "name")}"
+}
+
 resource "scaleway_security_group" "group" {
-  count = "${length(var.group) == 0 ? 0 : 1}"
+  count = "${length(var.rules) > 0 && lookup(var.group, "name", "") != "" ? 1 : 0}"
 
   name        = "${lookup(var.group, "name")}"
-  description = "${lookup(var.group, "description")}"
+  description = "${lookup(var.group, "description", "")}"
 }
 
 resource "scaleway_security_group_rule" "rule" {
-  count = "${length(var.rules)}"
+  count = "${length(var.rules) > 0 && lookup(var.group, "name", "") != "" ? length(var.rules) : 0}"
 
   security_group = "${scaleway_security_group.group.id}"
 
